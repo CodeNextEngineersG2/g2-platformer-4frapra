@@ -42,6 +42,17 @@ var gameRunning;
 var hitSound, yahSound, ayeSound, jumpSound, winSound, yattaSound, loseSound, collectableSound, pauseSound;
 var bgMusic;
 
+// This allows the player to press any of the arrow keys (as well as spacebar, just
+// in case you wanted to program that eventually) without interfering with the
+// browser window.
+window.addEventListener("keydown", function(e) {
+  var key = e.which || e.keyCode;
+  var gameKeys = [32, 37, 38, 39, 40];
+  if(gameKeys.indexOf(key) >= 0) {
+      e.preventDefault();
+  }
+});
+
 function preload() {
   // load background image
   backgroundImage = loadImage("assets/img/backgrounds/BG.png");
