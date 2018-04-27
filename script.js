@@ -29,10 +29,10 @@ const GRAVITY = 0.5;
 const DEFAULT_VELOCITY = 5;
 const DEFAULT_JUMP_FORCE = -5;
 var currentJumpForce;
-const MAX_JUMP_TIME = 2000; //milliseconds
-var currentJumpTime;
 
 // Timing and Control Variables
+const MAX_JUMP_TIME = 2000; //milliseconds
+var currentJumpTime;
 var millis, deltaMillis;
 var gameRunning;
 
@@ -225,8 +225,9 @@ function updatePlayer() {
 
 }
 
-// Check if the player is idle. If she is grounded and no button is being pressed,
-// set her animation to "idle" and her x velocity to 0.
+// Check if the player is idle. If neither left nor right are being pressed and the
+// player is grounded, set player's animation to "idle", and change her
+// x velocity to 0.
 function checkIdle() {
 
 }
@@ -244,10 +245,11 @@ function checkJumping() {
 
 }
 
-// Check if the player is moving left or right. If moving left, mirror the player's
-// sprite to face left. In either case, check if the player is currently grounded.
-// If so, set the player's animation to "run". Change the player's x velocity to
-// DEFAULT_VELOCITY if moving right, or negative DEFAULT_VELOCITY if moving left.
+// Check if the player is moving left or right. If so, move the player character
+// left or right according to DEFAULT_VELOCITY. Also be sure to mirror the
+// player's sprite left or right to avoid "moonwalking". Unless you're making
+// a Michael Jackson game I guess? There was a really good one on Sega Genesis,
+// you should play it. I beat it (pun intended) like five times as a kid, no lie.
 function checkMovingLeftRight() {
 
 }
