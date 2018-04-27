@@ -29,7 +29,7 @@ const GRAVITY = 0.5;
 const DEFAULT_VELOCITY = 5;
 const DEFAULT_JUMP_FORCE = -5;
 var currentJumpForce;
-const maxJumpTime = 2000; //milliseconds
+const MAX_JUMP_TIME = 2000; //milliseconds
 var currentJumpTime;
 
 // Timing and Control Variables
@@ -114,7 +114,7 @@ function resetGame() {
   buildLevel();
   createPlayer();
   currentJumpForce = DEFAULT_JUMP_FORCE;
-  currentJumpTime = maxJumpTime;
+  currentJumpTime = MAX_JUMP_TIME;
   playerGrounded = false;
   score = 0;
   gameRunning = true;
