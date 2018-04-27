@@ -146,7 +146,9 @@ function createPlayer() {
   player.addAnimation("fall", playerFallAnimation).looping = false;
   player.scale = 0.25;
   player.setCollider("rectangle", 0, 0, 250, 490);
+  //player.debug = true;
 }
+
 
 // Creates a platform of specified length (len) at x, y.
 // Value of len must be >= 2
@@ -174,8 +176,9 @@ function createMonster(x, y, velocity) {
   monster.addAnimation("walk", monsterWalkAnimation).loop = true;
   monster.changeAnimation("walk");
   monster.scale = 0.25;
-  monster.setCollider("rectangle", 0, 0, 380, 240);
+  monster.setCollider("rectangle", 0, 7, 300, 160);
   monster.velocity.x = velocity;
+  //monster.debug = true;
 }
 
 // Creates a collectable sprite and adds an image to it.
