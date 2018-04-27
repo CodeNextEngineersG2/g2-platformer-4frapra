@@ -5,9 +5,7 @@ var score;
 
 // Platform Variables
 var platforms; // p5.play sprite group
-var platformImageFirst;
-var platformImageMiddle;
-var platformImageLast;
+var platformImageFirst, platformImageMiddle, platformImageLast;
 
 // Player Variables
 var player; //p5.play sprite
