@@ -241,7 +241,7 @@ function checkIdle() {
 }
 
 // Check if the player is falling. If she is not grounded and her y velocity is
-// greater than 0, then set her animation to "falling".
+// greater than 0, then set her animation to "fall".
 function checkFalling() {
 
 }
@@ -255,9 +255,7 @@ function checkJumping() {
 
 // Check if the player is moving left or right. If so, move the player character
 // left or right according to DEFAULT_VELOCITY. Also be sure to mirror the
-// player's sprite left or right to avoid "moonwalking". Unless you're making
-// a Michael Jackson game I guess? There was a really good one on Sega Genesis,
-// you should play it. I beat it (pun intended) like five times as a kid, no lie.
+// player's sprite left or right to avoid "moonwalking".
 function checkMovingLeftRight() {
 
 }
