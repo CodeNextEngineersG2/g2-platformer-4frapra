@@ -1,6 +1,5 @@
 // UI Variables
 var gameScreen;
-var musicButton;
 var score;
 
 // Platform Variables
@@ -36,10 +35,6 @@ var currentJumpTime;
 var millis, deltaMillis;
 var gamePaused;
 
-// Sound, music, etc.
-var hitSound, yahSound, ayeSound, jumpSound, winSound, yattaSound, loseSound, collectableSound, pauseSound;
-var bgMusic;
-
 // This allows the player to press any of the arrow keys (as well as spacebar, just
 // in case you wanted to program that eventually) without interfering with the
 // browser window.
@@ -73,26 +68,11 @@ function preload() {
   // load other game object images
   collectableImage = loadImage("assets/img/kunoichi/Kunai.png");
   goalImage = loadImage("assets/img/objects/Goal.png");
-
-  // load sounds and music
-  soundFormats("mp3", "wav");
-  hitSound = loadSound("assets/sound/hit.wav");
-  yahSound = loadSound("assets/sound/yah.wav");
-  ayeSound = loadSound("assets/sound/aye.wav");
-  jumpSound = loadSound("assets/sound/jump.wav");
-  winSound = loadSound("assets/sound/win.wav");
-  yattaSound = loadSound("assets/sound/yatta.wav");
-  loseSound = loadSound("assets/sound/lose.wav");
-  collectableSound = loadSound("assets/sound/collectable.wav");
-  pauseSound = loadSound("assets/sound/pause.wav");
-  bgMusic = loadSound("assets/sound/bgm.mp3");
 }
 
 function setup() {
   gameScreen = createCanvas(1280, 720);
   gameScreen.parent("#game-screen");
-  musicButton = select("#music");
-  musicButton.mousePressed(toggleMusic);
   backgroundImage.resize(width, height);
   playerStartX = 50;
   playerStartY = 300;
@@ -248,7 +228,8 @@ function checkFalling() {
 
 // Check if the player is jumping. First, if her y velocity is less than 0, set
 // her animation to "jump". Then, handle if the player is holding down the up arrow
-// key, which should allow her to jump higher for a certain amount of time.
+// key, which should allow her to jump higher so long as currentJumpTime is greater
+// than 0.
 function checkJumping() {
 
 }
@@ -318,10 +299,5 @@ function executeWin() {
 // a monster). Anything can happen here, but the most important thing is that we
 // call resetGame() after a short delay.
 function executeLoss() {
-
-}
-
-// Toggles the game's music on and off.
-function toggleMusic() {
 
 }
