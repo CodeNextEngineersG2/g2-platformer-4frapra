@@ -56,14 +56,14 @@ function preload() {
   platformImageLast = loadImage("assets/img/tiles/Tile (16).png");
 
   // load player animations
-  playerIdleAnimation = loadAnimation("assets/img/kunoichi/Idle__000.png", "assets/img/kunoichi/Idle__009.png");
-  playerRunAnimation = loadAnimation("assets/img/kunoichi/Run__000.png", "assets/img/kunoichi/Run__009.png");
-  playerJumpAnimation = loadAnimation("assets/img/kunoichi/Jump__004.png");
-  playerFallAnimation = loadAnimation("assets/img/kunoichi/Jump__009.png");
+  playerIdleAnimation = loadAnimation("assets/img/Wolf/idle_000.png", "assets/img/Wolf/idle_003.png");
+  playerRunAnimation = loadAnimation("assets/img/Wolf/Run_004.png", "assets/img/Wolf/Run_007.png");
+  playerJumpAnimation = loadAnimation("assets/img/Wolf/Jump_008.png");
+  playerFallAnimation = loadAnimation("assets/img/Wolf/Jump_009.png");
 
   // load monster animations
-  monsterWalkAnimation = loadAnimation("assets/img/monster/frame-1.png", "assets/img/monster/frame-10.png");
-  monsterDefeatImage = loadImage("assets/img/monster/defeat-frame-3.png");
+  monsterWalkAnimation = loadAnimation("assets/img/Boar/Walk_003.png", "assets/img/Boar/Walk_005.png");
+  monsterDefeatImage = loadImage("assets/img/Boar/Defeat_008.png");
 
   // load other game object images
   collectableImage = loadImage("assets/img/kunoichi/Kunai.png");
@@ -112,19 +112,18 @@ function buildLevel() {
   createPlatform(50, 690, 5);
   createCollectable(300, 340);
   createMonster(500, 600, -1);
-  createMonster(500, 600, -2);
-  createMonster(500, 600, 0);
 }
 
 // Creates a player sprite and adds animations and a collider to it
 function createPlayer() {
   player = createSprite(playerStartX, playerStartY, 0, 0);
   player.addAnimation("idle", playerIdleAnimation).looping = true;
+  player.animation.frameDelay= 10;
   player.addAnimation("run", playerRunAnimation).looping = true;
   player.addAnimation("jump", playerJumpAnimation).looping = false;
   player.addAnimation("fall", playerFallAnimation).looping = false;
-  player.scale = 0.25;
-  player.setCollider("rectangle", 0, 0, 250, 490);
+  player.scale = 1.9;
+  player.setCollider("rectangle", 0, 0, 99, 70);
   //player.debug = true;
 }
 
@@ -156,8 +155,8 @@ function createMonster(x, y, velocity) {
   monster.addToGroup(monsters);
   monster.addAnimation("walk", monsterWalkAnimation).loop = true;
   monster.changeAnimation("walk");
-  monster.scale = 0.25;
-  monster.setCollider("rectangle", 0, 7, 300, 160);
+  monster.scale = 0.75;
+  monster.setCollider("rectangle", 0, 0, 92, 64);
   monster.velocity.x = velocity;
   if(monster.velocity.x <= 0) {
     monster.mirrorX(-1);
@@ -229,7 +228,7 @@ if(player.touching.bottom) {
   var defeatedMonster = createSprite(monster.position.x, monster.position.y, 0, 0);
   defeatedMonster.addImage(monsterDefeatImage);
   defeatedMonster.mirrorX(monster.mirrorX());
-  defeatedMonster.scale = 0.25;
+  defeatedMonster.scale = 0.5;
   defeatedMonster.life = 40;
   currentJumpTime = MAX_JUMP_TIME;
   currentJumpForce = DEFAULT_JUMP_FORCE;
@@ -349,7 +348,7 @@ function updateDisplay() {
   background(0, 0, 0);
 
   // briefly turn camera off before setting any static images or text
-  camera.off()
+  camera.off();
 
   // set the background image
   image(backgroundImage, 0, 0);
