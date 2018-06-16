@@ -1,3 +1,5 @@
+var fire;
+
 // UI Variables
 var gameScreen;
 var score;
@@ -8,8 +10,9 @@ var platformImageFirst, platformImageMiddle, platformImageLast;
 
 // Player Variables
 var player; //p5.play sprite
-var playerIdleAnimation, playerRunAnimation, playerJumpAnimation, playerFallAnimation;
+var playerIdleAnimation, playerRunAnimation, playerJumpAnimation, playerFallAnimation, playerAttackAnimation;
 var playerGrounded; // boolean
+var playerAttacking;
 var playerStartX, playerStartY;
 
 // Monster Variables
@@ -60,6 +63,7 @@ function preload() {
   playerRunAnimation = loadAnimation("assets/img/Wolf/Run_004.png", "assets/img/Wolf/Run_007.png");
   playerJumpAnimation = loadAnimation("assets/img/Wolf/Jump_008.png");
   playerFallAnimation = loadAnimation("assets/img/Wolf/Jump_009.png");
+  playerAttackAnimation = loadAnimation("assets/img/Wolf/Attack_010.png", "assets/img/Wolf/Attack_024.png");
 
   // load monster animations
   monsterWalkAnimation = loadAnimation("assets/img/Boar/Walk_003.png", "assets/img/Boar/Walk_005.png");
@@ -92,9 +96,11 @@ function resetGame() {
   allSprites.clear();
   buildLevel();
   createPlayer();
+  createFire();
   currentJumpForce = DEFAULT_JUMP_FORCE;
   currentJumpTime = MAX_JUMP_TIME;
   playerGrounded = false;
+  playerAttacking = false;
   score = 0;
   gamePaused = false;
   loop();
@@ -110,8 +116,25 @@ function buildLevel() {
   // create platforms, monsters, and any other game objects
   // best method is to draw sprites from left to right on the screen
   createPlatform(50, 690, 5);
-  createCollectable(300, 340);
-  createMonster(500, 600, -1);
+    createCollectable(300, 340);
+    createMonster(500, 600, -2);
+    createCollectable(700, 440);
+
+    createPlatform(850, 645, 3);
+    createMonster(1085, 530, 0);
+    createCollectable(1085, 320);
+    createCollectable(1300, 420);
+
+    createPlatform(1450, 595, 4);
+    createCollectable(1600, 320);
+    createMonster(1730, 470, 0);
+    createCollectable(1730, 240);
+    createMonster(1860, 470, 0);
+
+    createPlatform(2050, 500, 2);
+    goal = createSprite(2115, 390);
+    goal.addImage(goalImage);
+
 }
 
 // Creates a player sprite and adds animations and a collider to it
@@ -122,8 +145,16 @@ function createPlayer() {
   player.addAnimation("run", playerRunAnimation).looping = true;
   player.addAnimation("jump", playerJumpAnimation).looping = false;
   player.addAnimation("fall", playerFallAnimation).looping = false;
-  player.scale = 1.9;
+  player.addAnimation("attack", playerAttackAnimation).looping = false;
+  player.scale = 1.5;
   player.setCollider("rectangle", 0, 0, 99, 70);
+  //player.debug = true;
+}
+
+function createFire() {
+  fire = createSprite(0, 0, 500, 100);
+  //fire.setCollider("rectangle", 0, 0, 600, 60);
+  fire.visible = false;
   //player.debug = true;
 }
 
@@ -155,7 +186,7 @@ function createMonster(x, y, velocity) {
   monster.addToGroup(monsters);
   monster.addAnimation("walk", monsterWalkAnimation).loop = true;
   monster.changeAnimation("walk");
-  monster.scale = 0.75;
+  monster.scale = 1;
   monster.setCollider("rectangle", 0, 0, 92, 64);
   monster.velocity.x = velocity;
   if(monster.velocity.x <= 0) {
@@ -185,7 +216,7 @@ function applyGravity() {
     if(player.previousPosition.y !== player.position.y) {
       playerGrounded = false;
     }
-    if(player.position.y >= createCanvas) {
+    if(player.position.y >= height) {
       executeLoss();
     }
     for(var i = 0; i < monsters.length; i++) {
@@ -203,6 +234,9 @@ function checkCollisions() {
     player.collide(platforms, platformCollision);
     monsters.collide(platforms, platformCollision);
     player.collide(monsters,playerMonsterCollision);
+    player.overlap(collectables, getCollectable);
+    player.overlap(goal, executeWin);
+    fire.collide(monsters, fireMonsterCollision);
 }
 
 // Callback function that runs when the player or a monster collides with a
@@ -228,7 +262,7 @@ if(player.touching.bottom) {
   var defeatedMonster = createSprite(monster.position.x, monster.position.y, 0, 0);
   defeatedMonster.addImage(monsterDefeatImage);
   defeatedMonster.mirrorX(monster.mirrorX());
-  defeatedMonster.scale = 0.5;
+  defeatedMonster.scale = 0.75;
   defeatedMonster.life = 40;
   currentJumpTime = MAX_JUMP_TIME;
   currentJumpForce = DEFAULT_JUMP_FORCE;
@@ -242,8 +276,21 @@ else {
 }
 }
 
+function fireMonsterCollision(fire, monster) {
+  monster.remove();
+  var defeatedMonster = createSprite(monster.position.x, monster.position.y, 0, 0);
+  defeatedMonster.addImage(monsterDefeatImage);
+  defeatedMonster.mirrorX(monster.mirrorX());
+  defeatedMonster.scale = 0.75;
+  defeatedMonster.life = 40;
+  score++;
+
+}
+
 // Callback function that runs when the player overlaps with a collectable.
 function getCollectable(player, collectable) {
+collectable.remove();
+score++;
 
 }
 
@@ -252,6 +299,7 @@ function getCollectable(player, collectable) {
 function updatePlayer() {
   //console.log("Player x: " + player.position.x + " Player y: " + player.position.y);
   checkIdle();
+  checkAttacking();
   checkFalling();
   checkJumping();
   checkMovingLeftRight();
@@ -262,11 +310,20 @@ function updatePlayer() {
 // x velocity to 0.
 function checkIdle() {
   if(!keyIsDown(LEFT_ARROW) && !keyIsDown(RIGHT_ARROW) && playerGrounded) {
-    player.changeAnimation("idle");
+    if(!playerAttacking) {
+      player.changeAnimation("idle");
+    }
     player.velocity.x = 0;
   }
 }
 
+function checkAttacking() {
+  if(playerAttacking && player.animation.getFrame() === player.animation.getLastFrame()) {
+    playerAttacking = false;
+    fire.position.x = 0;
+    fire.position.y = 0;
+  }
+}
 // Check if the player is falling. If she is not grounded and her y velocity is
 // greater than 0, then set her animation to "fall".
 function checkFalling() {
@@ -319,6 +376,15 @@ function keyPressed() {
     player.velocity.y = currentJumpForce;
     millis = new Date();
   }
+  if(keyCode === 32 && playerGrounded && player.velocity.x === 0) {
+    playerAttacking = true;
+    player.changeAnimation("attack");
+    player.animation.changeFrame(0);
+    setTimeout(function() {
+      fire.position.x = player.position.x + (100 * player.mirrorX());
+      fire.position.y = player.position.y +20;
+    }, 250);
+  }
 }
 
 // Check if the player has released the up arrow key. If the player's y velocity
@@ -360,13 +426,18 @@ function updateDisplay() {
 
   // turn camera back on
   camera.on();
-
+  camera.position.x = player.position.x;
+  for(var i =0; i < collectables.length; i++) {
+  collectables[i].rotation += 5;
+}
 }
 
 // Called when the player has won the game (e.g., reached the goal at the end).
 // Anything can happen here, but the most important thing is that we call resetGame()
 // after a short delay.
 function executeWin() {
+  noLoop();
+  setTimeout(resetGame, 1000);
 
 }
 
